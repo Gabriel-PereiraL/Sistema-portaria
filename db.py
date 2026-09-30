@@ -1,23 +1,15 @@
-# =============================================================================
-# db.py — Conexão com o banco de dados
-# =============================================================================
-
+"""Database connection configuration loaded from the environment."""
+import os
 import mysql.connector
 
-
-
 DB_CONFIG = {
-    "host":     "localhost",
-    "user":     "ti",
-    "password": "235689",
-    "database": "portaria",
-    "port":     3306,
+    "host": os.environ.get("PORTARIA_DB_HOST", "localhost"),
+    "user": os.environ["PORTARIA_DB_USER"],
+    "password": os.environ["PORTARIA_DB_PASSWORD"],
+    "database": os.environ.get("PORTARIA_DB_NAME", "portaria"),
+    "port": int(os.environ.get("PORTARIA_DB_PORT", "3306")),
 }
 
-
 def get_connection():
-    """
-    Cria e retorna uma nova conexão com o banco MySQL usando DB_CONFIG.
-    Deve ser chamada no início de cada função de banco e fechada ao final.
-    """
+    """Create a MySQL connection from environment-backed configuration."""
     return mysql.connector.connect(**DB_CONFIG)
