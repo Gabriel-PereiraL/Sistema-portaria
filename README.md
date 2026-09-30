@@ -41,6 +41,8 @@ This system was designed to handle the museum's entry workflow with a focus on:
 
 ✔ Currently deployed and actively used in production at the museum.
 
+For existing installations, I apply [`schema_hardening.sql`](schema_hardening.sql) once after resolving any pre-existing duplicate open visits. The generated column and unique index enforce one open entry per visitor in MariaDB; the application also locks the visitor row and performs the check and insert in one transaction.
+
 ---
 
 ## 👤 Author

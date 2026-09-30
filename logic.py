@@ -5,7 +5,6 @@ import os
 from queries import (
     rg_ja_cadastrado,
     cadastrar_visitante,
-    visitante_ja_esta_dentro,
     registrar_entrada,
 )
 
@@ -35,7 +34,6 @@ def tentar_cadastrar_visitante(nome, rg):
     return True, "Visitante cadastrado com sucesso"
 
 def tentar_registrar_entrada(v_id, f_id, descricao, porteiro):
-    if visitante_ja_esta_dentro(v_id):
+    if not registrar_entrada(v_id, f_id, descricao, porteiro):
         return False, "Visitante já está dentro"
-    registrar_entrada(v_id, f_id, descricao, porteiro)
     return True, "Entrada registrada com sucesso"

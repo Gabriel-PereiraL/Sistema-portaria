@@ -76,9 +76,23 @@ def visitante_ja_esta_dentro(visitante_id: int) -> bool:
 
 
 def registrar_entrada(visitante_id: int, funcionario_id: int, descricao: str = "", porteiro: str = ""):
+    """Registra uma única visita aberta, serializando operações pelo visitante."""
     conn = get_connection()
     try:
         cursor = conn.cursor()
+        cursor.execute("SELECT id FROM visitante WHERE id = %s FOR UPDATE", (visitante_id,))
+        if cursor.fetchone() is None:
+            conn.rollback()
+            cursor.close()
+            return False
+        cursor.execute(
+            "SELECT id FROM entrada WHERE visitante_id = %s AND data_hora_saida IS NULL LIMIT 1",
+            (visitante_id,),
+        )
+        if cursor.fetchone() is not None:
+            conn.rollback()
+            cursor.close()
+            return False
         cursor.execute(
             "INSERT INTO entrada "
             "(data_hora_entrada, data_hora_saida, visitante_id, funcionario_id, descricao, porteiro) "
@@ -87,6 +101,10 @@ def registrar_entrada(visitante_id: int, funcionario_id: int, descricao: str = "
         )
         conn.commit()
         cursor.close()
+        return True
+    except Exception:
+        conn.rollback()
+        raise
     finally:
         conn.close()
 
